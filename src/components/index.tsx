@@ -1,7 +1,5 @@
-import React from 'react';
-
-const Indes = () => {
-  return <div>Indes</div>;
-};
-
-export default Indes;
+export * from './SplashScreen';
+export * from './AppLayout';
+export * from './OnboardingStep';
+export * from './OnboardingButton';
+export * from './PrivyProvider';
