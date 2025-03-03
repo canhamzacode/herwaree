@@ -3,7 +3,7 @@ import React from 'react';
 
 const SplashScreen = () => {
   return (
-    <div className="w-full h-screen flex items-center justify-center relative">
+    <div className="w-full h-screen flex items-center justify-center relative max-w-[375px] mx-auto">
       <div className="w-[194px] h-[183px]">
         <Image src="/splashLogo.png" alt="Splash Logo" width={194} height={183} />
       </div>

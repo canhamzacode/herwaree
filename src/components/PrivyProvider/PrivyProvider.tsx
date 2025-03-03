@@ -17,11 +17,13 @@ const Provider = ({ children }: IProvider) => {
           accentColor: '#676FFF',
           logo: '/splashLogo.png'
         },
-        loginMethods: ['email', 'wallet'], // Enable both Email & Wallet login
-        externalWallets: {
-          coinbaseWallet: {
-            // Valid connection options include 'all' (default), 'eoaOnly', or 'smartWalletOnly'
-            connectionOptions: 'smartWalletOnly'
+        loginMethods: ['email', 'wallet'],
+        embeddedWallets: {
+          ethereum: {
+            createOnLogin: 'users-without-wallets'
+          },
+          solana: {
+            createOnLogin: 'users-without-wallets'
           }
         },
         solanaClusters: [{ name: 'mainnet-beta', rpcUrl: 'https://api.mainnet-beta.solana.com' }]

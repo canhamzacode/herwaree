@@ -1,5 +1,7 @@
 'use client';
 
+import type React from 'react';
+
 import { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter, usePathname } from 'next/navigation';
@@ -11,24 +13,39 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
 
+  // Define public pages that don't require authentication
+  const publicPages = ['/auth', '/onboarding'];
+  const isPublicPage = publicPages.includes(pathname);
+
   useEffect(() => {
     if (!ready) return;
 
-    const publicPages = ['/auth', '/onboarding'];
-
-    if (authenticated && publicPages.includes(pathname)) {
+    if (authenticated && isPublicPage) {
       router.replace('/');
-    } else if (!authenticated && pathname.startsWith('/')) {
+      setLoading(false);
+    } else if (!authenticated && !isPublicPage) {
       router.replace('/auth');
+      setLoading(false);
+    } else {
+      // User is authenticated and on a protected page OR
+      // User is unauthenticated and on a public page
+      setLoading(false);
     }
-
-    setLoading(false);
-  }, [authenticated, ready, pathname, router]);
+  }, [authenticated, ready, router, isPublicPage]); // Added isPublicPage dependency
 
   // Show SplashScreen while checking auth status
   if (loading) {
     return <SplashScreen />;
   }
 
-  return <>{children}</>;
+  // Only render children if:
+  // 1. User is authenticated and on a protected page, OR
+  // 2. User is on a public page (authenticated or not)
+  if ((authenticated && !isPublicPage) || isPublicPage) {
+    return <>{children}</>;
+  }
+
+  // For any other case, show the splash screen
+  // This prevents the flash of protected content
+  return <SplashScreen />;
 }

@@ -22,7 +22,7 @@ const OnboardingStep = ({
 }: OnboardingStepProps) => {
   return (
     <div
-      className="pb-[78px] flex flex-col gap-[113px] min-h-screen justify-center relative"
+      className="pb-[78px] flex flex-col min-h-screen gap-6 justify-center"
       style={
         bgImage
           ? {
@@ -34,12 +34,12 @@ const OnboardingStep = ({
       }
     >
       {/* Image Section */}
-      <div className={`flex items-center justify-center mt-[${step === 0 ? '130px' : '85px'}]`}>
+      <div className={`flex items-center justify-center mt-auto`}>
         {image && <Image src={image} alt={`Step ${step + 1}`} width={375} height={298} />}
       </div>
 
       {/* Text & Button Section */}
-      <div className="px-2 flex flex-col gap-9 text-center items-center absolute bottom-[82px] w-full">
+      <div className="px-2 flex flex-col gap-9 text-center items-center  w-full  mt-auto">
         <div className="flex flex-col gap-4">
           <div
             className={`flex items-center gap-2 text-2xl font-bold ${textStyle || 'text-primary'}`}
