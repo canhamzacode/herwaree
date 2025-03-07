@@ -6,3 +6,5 @@ export * from './PrivyProvider';
 export * from './FeedCard';
 export * from './Navigation';
 export * from './Feeds';
+export * from './Input';
+export * from './Overlay';

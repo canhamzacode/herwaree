@@ -43,7 +43,7 @@ const routes = [
 export default function AppLayout({ children }: IAppLayout) {
   const pathname = usePathname();
 
-  const isAuthPage = pathname.startsWith('/auth');
+  const isAuthPage = ['/auth', '/onboarding'].some((path) => pathname.startsWith(path));
 
   return (
     <PrivyProviderWrapper>

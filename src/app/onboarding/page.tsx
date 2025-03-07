@@ -1,8 +1,8 @@
-import { Auth } from '@/modules';
+import { Onboarding } from '@/modules';
 import React from 'react';
 
 const OnboardingScreen = () => {
-  return <Auth />;
+  return <Onboarding />;
 };
 
 export default OnboardingScreen;

@@ -14,7 +14,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // Define public pages that don't require authentication
-  const publicPages = ['/auth', '/onboarding'];
+  const publicPages = ['/auth'];
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
