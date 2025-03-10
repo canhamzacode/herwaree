@@ -24,9 +24,9 @@ const routes = [
     path: '/'
   },
   {
-    name: 'Map',
+    name: 'Overview',
     icon: <LuMap size={20} />,
-    path: '/map'
+    path: '/overview'
   },
   {
     name: 'Stories',
