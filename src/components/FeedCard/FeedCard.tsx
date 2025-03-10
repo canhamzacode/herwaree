@@ -15,7 +15,7 @@ const FeedCard = ({ title, description, slug, image }: IFeedCard) => {
       <div className="flex flex-col gap-1.5 px-2.5">
         <h1 className="text-primary font-bold">{title}</h1>
         <p className="text-[10px]">{description}</p>
-        <Link href={`/${slug}`} className="text-primary text-[10px]">
+        <Link href={`/${slug}`} className="text-primary text-[10px] z-10">
           Learn more
         </Link>
       </div>

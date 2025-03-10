@@ -15,10 +15,8 @@ const Navigation = ({ routes, pathname }: INavigation) => {
           <Link
             key={index}
             href={route.path}
-            className={`flex flex-col items-center gap-1 text-sm transition-all h-[48px] w-[48px] justify-center ${
-              pathname === route.path
-                ? 'text-primary font-bold bg-[#DA498D33] rounded-[48px]'
-                : 'text-gray-500'
+            className={`flex flex-col items-center gap-1 text-sm rounded-[48px] transition-all h-[48px] w-[48px] justify-center hover:text-primary hover:font-bold hover:bg-[#DA498D33] ${
+              pathname === route.path ? 'text-primary font-bold bg-[#DA498D33] ' : 'text-gray-500'
             }`}
           >
             {route.icon}

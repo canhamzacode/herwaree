@@ -11,26 +11,26 @@ const Home = () => {
       title: 'Lifestyle Tips',
       description:
         'Discover simple lifestyle changes that can significantly reduce your breast cancer risk.',
-      slug: '/lifestyle-tips',
+      slug: 'lifestyle-tips',
       image: '/lifeStyle.png'
     },
     {
       title: 'Mammogram',
       description: 'Learn about the symptoms of breast cancer and when to see a doctor.',
-      slug: '/breast-cancer-symptoms',
+      slug: 'breast-cancer-symptoms',
       image: '/mammogram.png'
     },
     {
       title: 'Community',
       description: 'Connect with Community to Share Your Story and Find Support.',
-      slug: '/breast-cancer-prevention',
+      slug: 'breast-cancer-prevention',
       image: '/community.png'
     },
     {
       title: 'Community',
       description:
         'Empower Women Through Crypto Donation: Support Breast Cancer Research and Support Programs',
-      slug: '/breast-cancer-prevention',
+      slug: 'breast-cancer-prevention',
       image: '/SOL.png'
     }
   ];

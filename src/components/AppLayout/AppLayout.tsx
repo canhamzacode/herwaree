@@ -44,6 +44,7 @@ export default function AppLayout({ children }: IAppLayout) {
   const pathname = usePathname();
 
   const isAuthPage = ['/auth', '/onboarding'].some((path) => pathname.startsWith(path));
+  const isValidRoute = routes.some((route) => route.path === pathname);
 
   return (
     <PrivyProviderWrapper>
@@ -52,8 +53,8 @@ export default function AppLayout({ children }: IAppLayout) {
         <div className="w-full max-w-[375px] mx-auto min-h-screen flex flex-col">
           <div className="flex-grow pb-[85px]">{children}</div>
 
-          {/* Fixed bottom navigation */}
-          {!isAuthPage && <Navigation routes={routes} pathname={pathname} />}
+          {/* Show navigation only if it's not an auth page and is a valid route */}
+          {!isAuthPage && isValidRoute && <Navigation routes={routes} pathname={pathname} />}
         </div>
       </AuthGuard>
     </PrivyProviderWrapper>
