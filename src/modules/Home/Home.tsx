@@ -1,8 +1,9 @@
 'use client';
-import { Feeds } from '@/components';
+import { Calendar, Feeds } from '@/components';
+import { COLORS } from '@/constants';
+import Image from 'next/image';
 import React from 'react';
-import { CiBellOn, CiSearch } from 'react-icons/ci';
-import { MdFilterList } from 'react-icons/md';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 
 const Home = () => {
   const data = [
@@ -28,39 +29,67 @@ const Home = () => {
     {
       title: 'Community',
       description:
-        'Empower Women Through Crypto Donation: Support Breast Cancer Research and  Support Programs',
+        'Empower Women Through Crypto Donation: Support Breast Cancer Research and Support Programs',
       slug: '/breast-cancer-prevention',
       image: '/SOL.png'
     }
   ];
 
+  const upComingActivities = [
+    {
+      type: 'period',
+      title: 'Your self breast examination date is scheduled for March 11'
+    },
+    {
+      type: 'ovulation',
+      title: 'Your ovulation date is on March 15'
+    },
+    {
+      type: 'breast-test',
+      title: 'Your period is likely to start on or around March 11'
+    }
+  ];
+
   return (
-    <div className="flex flex-col w-full gap-5 px-5">
+    <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden">
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-[43px] h-[43px] rounded-[43px] bg-red-300"></div>
+          <div className="w-[43px] h-[43px] rounded-[43px] bg-red-300">
+            <Image
+              src="/avatar1.png"
+              alt="profile"
+              width={43}
+              height={43}
+              className="rounded-[43px]"
+            />
+          </div>
           <div>
             <h1 className="text-sm font-semibold">Hi, Amira</h1>
             <p className="text-[10px] text-gray-500">How are you today?</p>
           </div>
         </div>
-        <div className="w-[40px] h-[40px] rounded-[40px] border border-[#C9C9C9] flex items-center justify-center">
-          <CiBellOn size={20} />
+        <div>
+          <BsThreeDotsVertical size={20} />
         </div>
       </div>
-      <div className="w-full px-2 h-[33px] text-[#C9C9C9] flex items-center border border-[#C9C9C9] rounded-[100px] text-sm justify-between">
-        <div className="flex items-center w-full gap-2">
-          <CiSearch size={20} />
-          <input
-            type="text"
-            placeholder="Search for anything..."
-            className="w-full h-full bg-transparent outline-none text-xs "
-          />
-        </div>
-        <button className="bg-primary h-[25px] w-[25px] text-white flex items-center justify-center rounded-[25px]">
-          <MdFilterList size={15} />
-        </button>
+
+      <Calendar />
+
+      <div className="my-3 grid gap-3">
+        {upComingActivities.map((item, index) => {
+          const eventColor = COLORS.find((c) => c.type === item.type)?.color;
+          return (
+            <div
+              key={index}
+              className={`w-full bg-${eventColor} flex items-center justify-between p-3 text-sm rounded-md`}
+              style={{ backgroundColor: eventColor }}
+            >
+              <p>{item.title}</p>
+            </div>
+          );
+        })}
       </div>
+
       <Feeds data={data} />
     </div>
   );

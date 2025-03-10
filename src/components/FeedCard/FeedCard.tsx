@@ -11,7 +11,7 @@ interface IFeedCard {
 
 const FeedCard = ({ title, description, slug, image }: IFeedCard) => {
   return (
-    <div className="bg-primary/15 pt-6 flex flex-col gap-5 rounded-[20px] overflow-hidden justify-between">
+    <div className="bg-primary/15 pt-6 flex flex-col gap-5 rounded-[20px] overflow-hidden justify-between min-w-[159px]">
       <div className="flex flex-col gap-1.5 px-2.5">
         <h1 className="text-primary font-bold">{title}</h1>
         <p className="text-[10px]">{description}</p>
