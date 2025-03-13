@@ -8,39 +8,74 @@ import useMultiStepForm from '@/hooks/useMultiStepForm';
 import { OnboardingButton, Overlay } from '@/components';
 import { avatars } from '@/constants';
 import { useRouter } from 'next/navigation';
+import { useAuthState } from '../Auth/context';
 
-const Onboarding = () => {
-  const [selectedAvatar, setSelectedAvatar] = useState('');
-  const [username, setUsername] = useState('');
-  const [selectedImage, setSelectedImage] = useState('');
+// Define FormValues type
+interface FormValues {
+  username: string;
+  avatar: string;
+}
 
+// Define modal types
+enum ModalType {
+  SUCCESS = 'success',
+  ERROR = 'error'
+}
+
+interface ModalState {
+  isOpen: boolean;
+  type: ModalType;
+}
+
+const Onboarding: React.FC = () => {
+  const [selectedAvatar, setSelectedAvatar] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const { onboardUser } = useAuthState();
   const router = useRouter();
+
+  const [modal, setModal] = useState<ModalState>({
+    isOpen: false,
+    type: ModalType.SUCCESS
+  });
 
   useEffect(() => {
     if (selectedAvatar) {
-      const avatarSrc = avatars.find((avatar) => avatar.id === selectedAvatar)?.src || '';
-      setSelectedImage(avatarSrc);
+      setSelectedImage(avatars.find((avatar) => avatar.id === selectedAvatar)?.src || '');
     }
   }, [selectedAvatar]);
 
-  const [modal, setModal] = useState<{
-    isOpen: boolean;
-    type: 'error' | 'success';
-  }>({
-    isOpen: false,
-    type: 'success'
-  });
-
-  const closeModal = () => {
-    setModal({ ...modal, isOpen: false });
+  const closeModal = (): void => {
+    setModal({ isOpen: false, type: ModalType.SUCCESS });
     router.push('/');
   };
 
+  const handleSubmit = async (values: FormValues, stepIndex: number): Promise<void> => {
+    if (stepIndex === 0) {
+      setUsername(values.username);
+    } else if (stepIndex === 1) {
+      values.avatar = selectedAvatar;
+    }
+
+    if (isLastStep) {
+      setLoading(true);
+      try {
+        await onboardUser(values.username, selectedAvatar);
+        setModal({ isOpen: true, type: ModalType.SUCCESS });
+      } catch (error) {
+        console.error('Onboarding failed:', error);
+        setModal({ isOpen: true, type: ModalType.ERROR });
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      next();
+    }
+  };
+
   const steps = [
-    {
-      component: <Username />,
-      validationSchema: usernameValidationSchema
-    },
+    { component: <Username />, validationSchema: usernameValidationSchema },
     {
       component: (
         <AvatarSelection selectedAvatar={selectedAvatar} setSelectedAvatar={setSelectedAvatar} />
@@ -55,42 +90,36 @@ const Onboarding = () => {
 
   return (
     <div className="w-full gap-8 pt-6 flex flex-col">
-      <Formik
+      <Formik<FormValues>
         initialValues={{ username: '', avatar: '' }}
         validationSchema={steps[stepIndex].validationSchema}
-        onSubmit={(values) => {
-          if (stepIndex === 0) {
-            setUsername(values.username);
-          }
-
-          if (stepIndex === 1) {
-            values.avatar = selectedAvatar;
-          }
-
-          if (isLastStep) {
-            setModal({ isOpen: true, type: 'success' });
-            console.log('Final Submission:', values);
-          } else {
-            next();
-          }
-        }}
+        onSubmit={(values) => handleSubmit(values, stepIndex)}
       >
         {({ handleSubmit }) => (
           <Form className="grid gap-10">
             <div>{step}</div>
-            <OnboardingButton type="submit" onClick={handleSubmit}>
-              {isLastStep ? 'Done' : 'Next'}
+            <OnboardingButton type="submit" onClick={handleSubmit} disabled={loading}>
+              {loading ? 'Processing...' : isLastStep ? 'Done' : 'Next'}
             </OnboardingButton>
           </Form>
         )}
       </Formik>
 
-      {/* Success Modal Component */}
-      {modal.isOpen && modal.type === 'success' && (
-        <SuccessModal username={username} selectedImage={selectedImage} closeModal={closeModal} />
+      {/* Success & Error Modal */}
+      {modal.isOpen && (
+        <>
+          {modal.type === ModalType.SUCCESS ? (
+            <SuccessModal
+              username={username}
+              selectedImage={selectedImage}
+              closeModal={closeModal}
+            />
+          ) : (
+            <p className="text-red-500 text-center">Onboarding failed. Please try again.</p>
+          )}
+          <Overlay onClick={closeModal} />
+        </>
       )}
-
-      {modal.isOpen && <Overlay onClick={closeModal} />}
     </div>
   );
 };

@@ -1,51 +1,45 @@
 'use client';
 
 import type React from 'react';
-
 import { useEffect, useState } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
 import { useRouter, usePathname } from 'next/navigation';
 import { SplashScreen } from '@/components';
+import { useAuthState } from '@/modules/Auth/context';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { authenticated, ready } = usePrivy();
+  const { isAuthenticated, isAuthLoaded, isOnboarded } = useAuthState();
   const router = useRouter();
   const pathname = usePathname();
-  const [loading, setLoading] = useState(true);
+  const [isRouting, setIsRouting] = useState(true);
 
-  // Define public pages that don't require authentication
-  const publicPages = ['/auth'];
+  const publicPages = ['/auth', '/onboarding'];
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!isAuthLoaded) return;
 
-    if (authenticated && isPublicPage) {
-      router.replace('/');
-      setLoading(false);
-    } else if (!authenticated && !isPublicPage) {
+    if (isAuthenticated) {
+      if (!isOnboarded && pathname !== '/onboarding') {
+        setIsRouting(true);
+        router.replace('/onboarding');
+      } else if (isOnboarded && isPublicPage) {
+        setIsRouting(true);
+        router.replace('/');
+      } else {
+        setIsRouting(false);
+      }
+    } else if (!isAuthenticated && !isPublicPage) {
+      setIsRouting(true);
       router.replace('/auth');
-      setLoading(false);
     } else {
-      // User is authenticated and on a protected page OR
-      // User is unauthenticated and on a public page
-      setLoading(false);
+      setIsRouting(false);
     }
-  }, [authenticated, ready, router, isPublicPage]); // Added isPublicPage dependency
+  }, [isAuthenticated, isOnboarded, isAuthLoaded, router, pathname]);
 
-  // Show SplashScreen while checking auth status
-  if (loading) {
+  // Prevent rendering any page until the right route is set
+  if (!isAuthLoaded || isRouting) {
     return <SplashScreen />;
   }
 
-  // Only render children if:
-  // 1. User is authenticated and on a protected page, OR
-  // 2. User is on a public page (authenticated or not)
-  if ((authenticated && !isPublicPage) || isPublicPage) {
-    return <>{children}</>;
-  }
-
-  // For any other case, show the splash screen
-  // This prevents the flash of protected content
-  return <SplashScreen />;
+  return <>{children}</>;
 }

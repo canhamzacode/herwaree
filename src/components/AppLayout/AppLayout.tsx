@@ -8,6 +8,7 @@ import { RiHomeSmile2Line } from 'react-icons/ri';
 import { LuMap, LuUserRound } from 'react-icons/lu';
 import { MdOutlineEventNote } from 'react-icons/md';
 import { Navigation } from '../Navigation';
+import { AuthProvider } from '@/modules/Auth/context';
 
 const PrivyProviderWrapper = dynamic(() => import('@/components/PrivyProvider/PrivyProvider'), {
   ssr: false
@@ -48,15 +49,17 @@ export default function AppLayout({ children }: IAppLayout) {
 
   return (
     <PrivyProviderWrapper>
-      <AuthGuard>
-        {/* Ensures the layout takes full screen height */}
-        <div className="w-full max-w-[375px] mx-auto min-h-screen flex flex-col">
-          <div className="flex-grow pb-[85px]">{children}</div>
+      <AuthProvider>
+        <AuthGuard>
+          {/* Ensures the layout takes full screen height */}
+          <div className="w-full max-w-[375px] mx-auto min-h-screen flex flex-col">
+            <div className="flex-grow pb-[85px]">{children}</div>
 
-          {/* Show navigation only if it's not an auth page and is a valid route */}
-          {!isAuthPage && isValidRoute && <Navigation routes={routes} pathname={pathname} />}
-        </div>
-      </AuthGuard>
+            {/* Show navigation only if it's not an auth page and is a valid route */}
+            {!isAuthPage && isValidRoute && <Navigation routes={routes} pathname={pathname} />}
+          </div>
+        </AuthGuard>
+      </AuthProvider>
     </PrivyProviderWrapper>
   );
 }
