@@ -18,6 +18,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isAuthLoaded) return;
 
+    console.log('Checking......');
+
     if (isAuthenticated) {
       if (!isOnboarded && pathname !== '/onboarding') {
         setIsRouting(true);

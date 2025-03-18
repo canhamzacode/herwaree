@@ -24,7 +24,7 @@ const HealthOverview = () => {
   ];
 
   return (
-    <div className="w-full mt-9 flex flex-col gap-16">
+    <div className="w-full mt-9 flex flex-col gap-16 px-5 ">
       <div className="w-full max-w-[238px] mx-auto flex flex-col gap-3.5">
         <div className="flex items-center justify-center">
           <div className="w-[111px] h-[88px] bg-red-200 rounded-[10px]">

@@ -27,14 +27,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleAuthentication = async (privyUser: typeof user) => {
     if (!privyUser) return;
 
-    if (!privyUser || !privyUser.id || !privyUser.email?.address || !privyUser.wallet?.address) {
+    if (!privyUser || !privyUser.id || !privyUser.wallet?.address) {
       console.error('User data is incomplete, skipping authentication request.');
       return;
     }
 
     const formData = {
       privy_id: privyUser.id,
-      email: privyUser.email.address,
+      email: privyUser.email?.address || '',
       wallet_addr: privyUser.wallet.address
     };
 
@@ -42,8 +42,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const res = await axiosInstance.post('/auth/auth-me', formData);
-      setIsOnboarded(res.data.is_onboarded);
-      router.replace(res.data.is_onboarded ? '/' : '/onboarding');
+      setIsOnboarded(res.data.isOnboarded);
+      // router.replace(res.data.isOnboarded ? '/' : '/onboarding');
     } catch (error) {
       console.error('Error sending user data:', error);
     } finally {

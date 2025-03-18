@@ -28,3 +28,11 @@ export const COLORS: Array<{ color: string; text: string; type: EventType }> = [
     type: 'breast-test'
   }
 ];
+
+export const questions = [
+  { question: 'Lump or Thickening?', options: ['Hard or soft lump', 'No noticeable lump'] },
+  { question: 'Skin Dimpling?', options: ['Noticeable dimpling', 'Skin looks normal'] },
+  { question: 'Pain?', options: ['Unusual pain', 'No unusual pain'] },
+  { question: 'Redness?', options: ['Redness around breast', 'No redness'] },
+  { question: 'Swelling?', options: ['Swollen breast or underarm', 'No swelling'] }
+];
