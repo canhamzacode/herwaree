@@ -5,3 +5,4 @@ export * from './HealthOverview';
 export * from './Blogs';
 export * from './BlogDetails';
 export * from './SelfExamination';
+export * from './RiskPrediction';

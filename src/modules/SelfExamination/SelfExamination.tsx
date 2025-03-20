@@ -37,14 +37,16 @@ const SelfExamination = () => {
             }
           />
           <div className="flex flex-col gap-3">
-            <h3 className="text-xl text-primary font-bold">Self examination guide</h3>
-            <p className="text-sm text-gray-500 mt-2">
+            <h3 className="text-sm text-primary font-bold">Self examination guide</h3>
+            <p className="text-xs text-gray-500 mt-2">
               Take a few minutes each month to check your breasts. Look for any changes like lumps,
               dimpling, or unusual pain. Early detection is key! 💕
             </p>
             <div className="w-full h-[167px] bg-red-300 rounded-lg"></div>
           </div>
-          <Button onClick={() => setStartExamination(true)}>Start self examination</Button>
+          <Button className="text-sm" onClick={() => setStartExamination(true)}>
+            Start self examination
+          </Button>
         </>
       ) : (
         <Formik
@@ -72,11 +74,19 @@ const SelfExamination = () => {
                 ))}
               </div>
               <div className="flex justify-between gap-4 mt-4">
-                <Button type="button" variant="outline" onClick={prev} disabled={stepIndex === 0}>
+                <Button
+                  type="button"
+                  className="text-xs"
+                  variant="outline"
+                  onClick={prev}
+                  disabled={stepIndex === 0}
+                >
                   Back
                 </Button>
 
-                <Button type="submit">{isLastStep ? 'Finish' : 'Next'}</Button>
+                <Button type="submit" className="text-xs">
+                  {isLastStep ? 'Finish' : 'Next'}
+                </Button>
               </div>
             </Form>
           )}
