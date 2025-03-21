@@ -30,7 +30,7 @@ const RiskPredictionQuestionCard = ({
           <Image
             width={100}
             height={100}
-            src={'/logo.png' || image}
+            src={'/logo.png'}
             alt="question visual"
             className="rounded-lg object-cover"
           />
