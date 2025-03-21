@@ -1,1 +1,1 @@
-export { default as ReskPrediction } from './RiskPrediction';
+export { default as RiskPrediction } from './RiskPrediction';

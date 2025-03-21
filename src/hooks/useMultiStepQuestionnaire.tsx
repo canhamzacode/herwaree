@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
-export const useMultiStepQuestionnaire = <T extends { question: string; options: string[] }>(
+export const useMultiStepQuestionnaire = <
+  T extends { question: string; options?: string[]; name: string }
+>(
   questions: T[],
   chunkSize: number,
   renderQuestion: (q: T, index: number) => React.ReactNode
@@ -23,8 +25,8 @@ export const useMultiStepQuestionnaire = <T extends { question: string; options:
 
   const initialValues = useMemo(() => {
     return questions.reduce(
-      (acc, _, index) => {
-        acc[`question_${index}`] = '';
+      (acc, q) => {
+        acc[q.name] = '';
         return acc;
       },
       {} as Record<string, string>

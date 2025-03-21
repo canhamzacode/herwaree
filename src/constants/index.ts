@@ -30,9 +30,21 @@ export const COLORS: Array<{ color: string; text: string; type: EventType }> = [
 ];
 
 export const questions = [
-  { question: 'Lump or Thickening?', options: ['Hard or soft lump', 'No noticeable lump'] },
-  { question: 'Skin Dimpling?', options: ['Noticeable dimpling', 'Skin looks normal'] },
-  { question: 'Pain?', options: ['Unusual pain', 'No unusual pain'] },
-  { question: 'Redness?', options: ['Redness around breast', 'No redness'] },
-  { question: 'Swelling?', options: ['Swollen breast or underarm', 'No swelling'] }
+  {
+    question: 'Lump or Thickening?',
+    options: ['Hard or soft lump', 'No noticeable lump'],
+    name: 'lump'
+  },
+  {
+    question: 'Skin Dimpling?',
+    options: ['Noticeable dimpling', 'Skin looks normal'],
+    name: 'skin'
+  },
+  { question: 'Pain?', options: ['Unusual pain', 'No unusual pain'], name: 'pain' },
+  { question: 'Redness?', options: ['Redness around breast', 'No redness'], name: 'redness' },
+  {
+    question: 'Swelling?',
+    options: ['Swollen breast or underarm', 'No swelling'],
+    name: 'swelling'
+  }
 ];
