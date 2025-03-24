@@ -6,7 +6,7 @@ import { Input } from '../Input';
 
 interface QuestionCardProps {
   question: string;
-  type: 'option' | 'text';
+  type: 'option' | 'text' | 'date';
   options?: string[];
   name: string;
   description?: string;
@@ -38,8 +38,8 @@ const RiskPredictionQuestionCard = ({
       )}
 
       <div className="flex flex-col gap-3 w-full rounded-[20px] border-dotted border-primary border-2 pb-4">
-        <div className="h-[77px] bg-primary w-full flex items-center justify-center rounded-t-[20px]">
-          <h4 className="font-bold text-white text-lg">{question}</h4>
+        <div className="min-h-[77px] bg-primary w-full flex items-center justify-center rounded-t-[20px] p-4">
+          <h4 className="font-bold text-white text-lg text-center">{question}</h4>
         </div>
         <div className={`w-full px-3 gap-4 grid ${options.length == 2 ? 'grid-cols-2' : ''}`}>
           {type === 'option' &&
@@ -65,7 +65,9 @@ const RiskPredictionQuestionCard = ({
               );
             })}
 
-          {type === 'text' && <Input name={name} type="text" placeholder="Type your answer..." />}
+          {(type === 'text' || type === 'date') && (
+            <Input name={name} type={type} placeholder="Type your answer..." />
+          )}
         </div>
       </div>
     </div>

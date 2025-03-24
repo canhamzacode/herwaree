@@ -28,3 +28,9 @@ export type CalendarEventMap = { [key: string]: EventType };
 interface CustomCalendarProps {
   markedDates?: CalendarEventMap;
 }
+
+export interface ResultData {
+  riskLevel: string;
+  recommendation: string;
+  details: string;
+}

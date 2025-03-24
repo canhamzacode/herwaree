@@ -4,7 +4,7 @@ import { Field, FieldProps } from 'formik';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
 
 interface CustomInputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'date';
   placeholder?: string;
   name: string;
   label?: string;

@@ -1,11 +1,12 @@
 'use client';
-import { Button, Header, RiskCard } from '@/components';
+import { AcessmentResult, Button, Header, RiskCard } from '@/components';
 import useMultiStepForm from '@/hooks/useMultiStepForm';
 import { useMultiStepQuestionnaire } from '@/hooks/useMultiStepQuestionnaire';
+import { ResultData } from '@/types';
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 
-type QuestionType = 'option' | 'text';
+type QuestionType = 'option' | 'text' | 'date';
 
 interface Question {
   id: number;
@@ -33,6 +34,56 @@ const questions: Question[] = [
     type: 'text',
     description: 'Your location helps personalize advice.',
     name: 'location'
+  },
+  {
+    id: 3,
+    question: 'What is your age?',
+    type: 'text',
+    description: 'Age is a risk factor.',
+    name: 'age'
+  },
+  {
+    id: 4,
+    question: 'Do you have a family history of breast cancer?',
+    type: 'option',
+    options: ['Yes', 'No'],
+    description: 'Family history increases risk.',
+    image: '/images/family-history.png',
+    name: 'family_history'
+  },
+  {
+    id: 5,
+    question: 'When were your born?',
+    type: 'date',
+    description: 'Date of birth is a risk factor.',
+    name: 'dob'
+  },
+  {
+    id: 6,
+    question: 'Do you smoke?',
+    type: 'option',
+    options: ['Yes', 'No'],
+    description: 'Smoking is a risk factor.',
+    image: '/images/smoking.png',
+    name: 'smoking'
+  },
+  {
+    id: 7,
+    question: 'Did you start your period before age 11, or entered menopause before 55?',
+    type: 'option',
+    options: ['Yes', 'No'],
+    description: 'Early periods and late menopause are risk factors.',
+    image: '/images/menstrual-cycle',
+    name: 'menstrual_cycle'
+  },
+  {
+    id: 8,
+    question: 'Have you entered menopause yet? ( no period for atleast 12 months)',
+    type: 'option',
+    options: ['Yes', 'No'],
+    description: 'Menopause is a risk factor.',
+    image: '/images/menopause.png',
+    name: 'menopause'
   }
 ];
 
@@ -55,9 +106,32 @@ const RiskPrediction = () => {
   });
 
   const [startExamination, setStartExamination] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+  const [resultData, setResultData] = useState<ResultData | null>(null);
+
+  const handleSubmit = (values: unknown) => {
+    if (isLastStep) {
+      console.log('Final Answers:', values);
+
+      // Simulate backend response (replace this with actual API call)
+      const simulatedResult = {
+        riskLevel: 'Moderate',
+        recommendation: 'Consider scheduling a mammogram and consult a specialist.',
+        details:
+          'Based on your family history and lifestyle factors, you may have a moderate risk of breast cancer.'
+      };
+
+      setResultData(simulatedResult);
+      setShowResult(true);
+    } else {
+      next();
+    }
+  };
+
   return (
     <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden py-6">
       {!startExamination ? (
+        // START SCREEN
         <>
           <Header
             showProfile={false}
@@ -86,18 +160,13 @@ const RiskPrediction = () => {
             Start Risk Prediction
           </Button>
         </>
+      ) : showResult ? (
+        // RESULT SCREEN
+        <>{resultData && <AcessmentResult resultData={resultData} />}</>
       ) : (
-        <Formik
-          initialValues={initialValues}
-          onSubmit={(values) => {
-            if (isLastStep) {
-              console.log('Final Answers:', values);
-            } else {
-              next();
-            }
-          }}
-        >
-          {({}) => (
+        // FORM SCREEN
+        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+          {() => (
             <Form className="grid gap-6">
               <div className="flex gap-2 justify-center items-center mt-4">
                 {Array.from({ length: steps.length }).map((_, index) => (
