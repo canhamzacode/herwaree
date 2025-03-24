@@ -1,8 +1,8 @@
 'use client';
-import { Calendar, Feeds } from '@/components';
+import { Calendar, Feeds, Sidebar } from '@/components';
 import { COLORS } from '@/constants';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
 const Home = () => {
@@ -50,8 +50,14 @@ const Home = () => {
     }
   ];
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden">
+    <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden relative">
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-[43px] h-[43px] rounded-[43px] bg-red-300">
@@ -68,10 +74,11 @@ const Home = () => {
             <p className="text-[10px] text-gray-500">How are you today?</p>
           </div>
         </div>
-        <div>
+        <button onClick={toggleModal}>
           <BsThreeDotsVertical size={20} />
-        </div>
+        </button>
       </div>
+      {isOpen && <Sidebar isOpen={isOpen} toggleSidebar={toggleModal} />}
 
       <Calendar />
 

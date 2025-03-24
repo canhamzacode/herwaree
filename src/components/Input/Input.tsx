@@ -4,7 +4,7 @@ import { Field, FieldProps } from 'formik';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
 
 interface CustomInputProps {
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'date';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'date' | 'time';
   placeholder?: string;
   name: string;
   label?: string;
@@ -61,7 +61,7 @@ const InputField: React.FC<CustomInputProps> = ({
   const renderInput = (field?: FieldProps['field']) => (
     <div className="flex flex-col gap-2 w-full">
       {label && (
-        <label htmlFor={name} className="tablet:text-lg text-sm">
+        <label htmlFor={name} className="tablet:text-base text-sm">
           {label}
         </label>
       )}
@@ -96,8 +96,9 @@ const InputField: React.FC<CustomInputProps> = ({
       {({ field, meta }: FieldProps) => (
         <div className="flex flex-col gap-1">
           {renderInput(field)}
-          {meta.touched ||
-            (meta.error && <p className="text-red-600 text-sm capitalize">{meta.error}</p>)}
+          {meta.touched && meta.error && (
+            <p className="text-red-600 text-sm capitalize">{meta.error}</p>
+          )}
         </div>
       )}
     </Field>

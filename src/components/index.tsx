@@ -15,3 +15,7 @@ export * from './Button';
 export * from './QuestionCard';
 export * from './RiskPredictionQuestionCard';
 export * from './AcessmentResult';
+export * from './Sidebar';
+export * from './TextArea';
+export * from './ReminderDetailsStep';
+export * from './ReminderFrequencyStep';
