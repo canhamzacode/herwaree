@@ -34,7 +34,7 @@ const routes = [
   {
     name: 'Stories',
     icon: <MdOutlineEventNote size={20} />,
-    path: '/stories'
+    path: '/reminder'
   },
   {
     name: 'Profile',
