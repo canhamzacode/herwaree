@@ -4,7 +4,8 @@ import useMultiStepForm from '@/hooks/useMultiStepForm';
 import { useMultiStepQuestionnaire } from '@/hooks/useMultiStepQuestionnaire';
 import { ResultData } from '@/types';
 import { Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRiskPrediction } from './context';
 
 type QuestionType = 'option' | 'text' | 'date';
 
@@ -88,6 +89,7 @@ const questions: Question[] = [
 ];
 
 const RiskPrediction = () => {
+  const { getRiskPredictionQuestions } = useRiskPrediction();
   const chunkSize = 1;
   const { steps, initialValues } = useMultiStepQuestionnaire(questions, chunkSize, (q, index) => (
     <RiskCard
@@ -96,7 +98,7 @@ const RiskPrediction = () => {
       options={q.options}
       name={q.name}
       type={q.type}
-      description={q.description}
+      // description={q.description}
       image={q.image}
     />
   ));
@@ -127,6 +129,10 @@ const RiskPrediction = () => {
       next();
     }
   };
+
+  useEffect(() => {
+    getRiskPredictionQuestions();
+  }, []);
 
   return (
     <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden py-6">

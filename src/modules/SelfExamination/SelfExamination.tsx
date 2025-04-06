@@ -1,26 +1,36 @@
 'use client';
 
 import { Button, Header, QuestionCard } from '@/components';
-import { questions } from '@/constants';
 import useMultiStepForm from '@/hooks/useMultiStepForm';
 import { useMultiStepQuestionnaire } from '@/hooks/useMultiStepQuestionnaire';
 import { Formik, Form } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelfExamination } from './context';
 
 const SelfExamination = () => {
+  const { getSelfExaminationQuestions, selfExaminationQuestions } = useSelfExamination();
+
+  const formatedQuestions = selfExaminationQuestions.map((q) => ({
+    ...q,
+    name: q.question
+  }));
+
   const chunkSize = 2;
-  const { steps, initialValues } = useMultiStepQuestionnaire(questions, chunkSize, (q, index) => (
-    <QuestionCard
-      key={index}
-      question={q.question}
-      options={q.options}
-      name={`question_${index}`}
-    />
-  ));
+  const { steps, initialValues } = useMultiStepQuestionnaire(
+    formatedQuestions,
+    chunkSize,
+    (q, index) => (
+      <QuestionCard key={index} question={q.question} options={q.options} name={q.question} />
+    )
+  );
 
   const { stepIndex, next, isLastStep, prev } = useMultiStepForm({
     steps: steps.map((s) => s.component)
   });
+
+  useEffect(() => {
+    getSelfExaminationQuestions();
+  }, []);
 
   const [startExamination, setStartExamination] = useState(false);
 
@@ -42,7 +52,7 @@ const SelfExamination = () => {
               Take a few minutes each month to check your breasts. Look for any changes like lumps,
               dimpling, or unusual pain. Early detection is key! 💕
             </p>
-            <div className="w-full h-[167px] bg-red-300 rounded-lg"></div>
+            <div className="w-full h-[167px] bg-[#DA498D] rounded-lg"></div>
           </div>
           <Button className="text-sm" onClick={() => setStartExamination(true)}>
             Start self examination

@@ -5,6 +5,10 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/utils/axiosInstance';
 
+interface IUser {
+  email: string;
+  username: string;
+}
 interface AuthContextType {
   user: { privy_id: string; email: string; wallet_addr: string } | null;
   isAuthenticated: boolean;
@@ -13,6 +17,8 @@ interface AuthContextType {
   login: () => void;
   logout: () => void;
   onboardUser: (username: string, image_id: string) => void;
+  getUserInfo: () => void;
+  authUser: IUser | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userData, setUserData] = useState<AuthContextType['user'] | null>(null);
   const [isOnboarded, setIsOnboarded] = useState<boolean>(false);
   const [isAuthLoaded, setIsAuthLoaded] = useState<boolean>(false);
+  const [authUser, setAuthUser] = useState<IUser | null>(null);
 
   const handleAuthentication = async (privyUser: typeof user) => {
     if (!privyUser) return;
@@ -63,6 +70,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const getUserInfo = async () => {
+    try {
+      const res = await axiosInstance.get(`/auth/user/${user?.id}`);
+      console.log('res', res);
+      setAuthUser(res.data.user);
+    } catch (error) {
+      console.error('Error getting user data:', error);
+    }
+  };
+
   useEffect(() => {
     if (ready) {
       if (authenticated && user) {
@@ -82,7 +99,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isOnboarded,
         login,
         logout,
-        onboardUser
+        onboardUser,
+        getUserInfo,
+        authUser
       }}
     >
       {children}

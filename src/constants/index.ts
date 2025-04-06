@@ -13,17 +13,17 @@ export const avatars = [
 
 export const COLORS: Array<{ color: string; text: string; type: EventType }> = [
   {
-    color: '#FFDCE2',
+    color: '#FFD8DF',
     text: 'Period',
     type: 'period'
   },
   {
-    color: '#D1E4F6',
+    color: '#D8E8F8',
     text: 'Ovulation',
     type: 'ovulation'
   },
   {
-    color: '#EBD4F9',
+    color: '#EAD4F8',
     text: 'Breast Test Examination',
     type: 'breast-test'
   }

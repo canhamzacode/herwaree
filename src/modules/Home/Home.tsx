@@ -2,17 +2,22 @@
 import { Calendar, Feeds, Sidebar } from '@/components';
 import { COLORS } from '@/constants';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useAuthState } from '../Auth/context';
 
 const Home = () => {
+  const { getUserInfo, authUser } = useAuthState();
+
+  console.log('authUser', authUser);
+
   const data = [
     {
       title: 'Lifestyle Tips',
       description:
         'Discover simple lifestyle changes that can significantly reduce your breast cancer risk.',
       slug: 'lifestyle-tips',
-      image: '/lifeStyle.png'
+      image: '/lifeStyle.svg'
     },
     {
       title: 'Mammogram',
@@ -56,11 +61,15 @@ const Home = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   return (
     <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden relative">
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-[43px] h-[43px] rounded-[43px] bg-red-300">
+          <div className="w-[43px] h-[43px] rounded-[43px]">
             <Image
               src="/avatar1.png"
               alt="profile"
@@ -70,7 +79,9 @@ const Home = () => {
             />
           </div>
           <div>
-            <h1 className="text-sm font-semibold">Hi, Amira</h1>
+            <h1 className="text-sm font-semibold">
+              Hi, <span className="capitalize">{authUser?.username}</span>
+            </h1>
             <p className="text-[10px] text-gray-500">How are you today?</p>
           </div>
         </div>

@@ -9,6 +9,8 @@ import { LuMap, LuUserRound } from 'react-icons/lu';
 import { MdOutlineEventNote } from 'react-icons/md';
 import { Navigation } from '../Navigation';
 import { AuthProvider } from '@/modules/Auth/context';
+import SelfExaminationProvider from '@/modules/SelfExamination/context';
+import RiskPredictionProvider from '@/modules/RiskPrediction/context';
 
 const PrivyProviderWrapper = dynamic(() => import('@/components/PrivyProvider/PrivyProvider'), {
   ssr: false
@@ -50,15 +52,19 @@ export default function AppLayout({ children }: IAppLayout) {
   return (
     <PrivyProviderWrapper>
       <AuthProvider>
-        <AuthGuard>
-          {/* Ensures the layout takes full screen height */}
-          <div className="w-full max-w-[375px] mx-auto min-h-screen flex flex-col">
-            <div className="flex-grow pb-[85px]">{children}</div>
+        <SelfExaminationProvider>
+          <RiskPredictionProvider>
+            <AuthGuard>
+              {/* Ensures the layout takes full screen height */}
+              <div className="w-full max-w-[375px] mx-auto min-h-screen flex flex-col">
+                <div className="flex-grow pb-[85px]">{children}</div>
 
-            {/* Show navigation only if it's not an auth page and is a valid route */}
-            {!isAuthPage && isValidRoute && <Navigation routes={routes} pathname={pathname} />}
-          </div>
-        </AuthGuard>
+                {/* Show navigation only if it's not an auth page and is a valid route */}
+                {!isAuthPage && isValidRoute && <Navigation routes={routes} pathname={pathname} />}
+              </div>
+            </AuthGuard>
+          </RiskPredictionProvider>
+        </SelfExaminationProvider>
       </AuthProvider>
     </PrivyProviderWrapper>
   );
