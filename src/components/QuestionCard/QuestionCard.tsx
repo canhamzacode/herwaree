@@ -4,7 +4,10 @@ import { useField, useFormikContext } from 'formik';
 
 interface QuestionCardProps {
   question: string;
-  options: string[];
+  options: {
+    value: string;
+    label: string;
+  }[];
   name: string;
 }
 
@@ -26,14 +29,14 @@ const QuestionCard = ({ question, options, name }: QuestionCardProps) => {
                   ? 'border-primary bg-primary/10 text-primary'
                   : 'border-[#818181] text-[#818181]'
               }`}
-              onClick={() => setFieldValue(name, option)}
+              onClick={() => setFieldValue(name, option.value)}
             >
               <div
                 className={`w-3 h-3 rounded-full border ${
                   isSelected ? 'bg-primary border-primary' : 'border-[#818181] text-[#818181]'
                 }`}
               />
-              <span className="flex-1 text-sm">{option}</span>
+              <span className="flex-1 text-sm">{option.label}</span>
             </div>
           );
         })}

@@ -1,7 +1,14 @@
 import { useMemo } from 'react';
 
 export const useMultiStepQuestionnaire = <
-  T extends { question: string; options?: string[]; name: string }
+  T extends {
+    question: string;
+    options?: {
+      value: string;
+      label: string;
+    }[];
+    name: string;
+  }
 >(
   questions: T[],
   chunkSize: number,

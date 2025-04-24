@@ -12,7 +12,11 @@ const SelfExamination = () => {
 
   const formatedQuestions = selfExaminationQuestions.map((q) => ({
     ...q,
-    name: q.question
+    name: q.question,
+    options: q.options?.map((opt: string) => ({
+      label: opt,
+      value: opt
+    }))
   }));
 
   const chunkSize = 2;
@@ -71,6 +75,7 @@ const SelfExamination = () => {
         >
           {({}) => (
             <Form className="grid gap-6">
+              <Header showProfile={false} />
               <div className="flex flex-col gap-6">{steps[stepIndex].component}</div>
 
               <div className="flex gap-2 justify-center items-center mt-4">

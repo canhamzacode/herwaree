@@ -27,6 +27,7 @@ const Header = ({
     <div className="w-full flex items-center justify-between">
       {hasBackButton && (
         <button
+          type="button"
           onClick={handleBack}
           className="w-[45px] h-[45px] rounded-xl border border-primary flex items-center justify-center text-primary"
         >

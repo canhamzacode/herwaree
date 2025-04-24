@@ -6,14 +6,18 @@ import { ResultData } from '@/types';
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useRiskPrediction } from './context';
+import { usePrivy } from '@privy-io/react-auth';
 
-type QuestionType = 'option' | 'text' | 'date';
+type QuestionType = 'option' | 'text' | 'date' | 'number';
 
 interface Question {
   id: number;
   question: string;
   type: QuestionType;
-  options?: string[];
+  options?: {
+    value: string;
+    label: string;
+  }[];
   description?: string;
   image?: string;
   name: string;
@@ -22,74 +26,99 @@ interface Question {
 const questions: Question[] = [
   {
     id: 1,
-    question: 'Do you have breast cancer?',
-    type: 'option',
-    options: ['Yes', 'No'],
-    description: 'Early detection is crucial.',
-    image: '/images/breast-cancer-info.png',
-    name: 'breast_cancer'
+    question: 'What is your current age?',
+    type: 'number',
+    description: 'Current age of the patient (e.g., 50)',
+    name: 'T1'
   },
   {
     id: 2,
-    question: 'Where are you from?',
-    type: 'text',
-    description: 'Your location helps personalize advice.',
-    name: 'location'
+    question: 'What age do you want to assess your breast cancer risk at?',
+    type: 'number',
+    description: 'Target age to assess breast cancer risk (e.g., 60)',
+    name: 'T2'
   },
   {
     id: 3,
-    question: 'What is your age?',
-    type: 'text',
-    description: 'Age is a risk factor.',
-    name: 'age'
+    question: 'How many previous breast biopsies have you had?',
+    type: 'number',
+    description: 'Number of previous breast biopsies',
+    name: 'N_Biop'
   },
   {
     id: 4,
-    question: 'Do you have a family history of breast cancer?',
+    question: 'Was hyperplasia found in any biopsy?',
     type: 'option',
-    options: ['Yes', 'No'],
-    description: 'Family history increases risk.',
-    image: '/images/family-history.png',
-    name: 'family_history'
+    options: [
+      {
+        value: '1',
+        label: 'Yes'
+      },
+      {
+        value: '0',
+        label: 'No'
+      }
+    ],
+    description: 'Indicates if hyperplasia was found (1 for Yes, 0 for No)',
+    name: 'HypPlas'
   },
   {
     id: 5,
-    question: 'When were your born?',
-    type: 'date',
-    description: 'Date of birth is a risk factor.',
-    name: 'dob'
+    question: 'At what age did you have your first menstruation?',
+    type: 'text',
+    description: 'Age at first menstruation',
+    name: 'AgeMen'
   },
   {
     id: 6,
-    question: 'Do you smoke?',
-    type: 'option',
-    options: ['Yes', 'No'],
-    description: 'Smoking is a risk factor.',
-    image: '/images/smoking.png',
-    name: 'smoking'
+    question: 'At what age did you have your first live birth?',
+    type: 'text',
+    description: 'Age at first live birth',
+    name: 'Age1st'
   },
   {
     id: 7,
-    question: 'Did you start your period before age 11, or entered menopause before 55?',
-    type: 'option',
-    options: ['Yes', 'No'],
-    description: 'Early periods and late menopause are risk factors.',
-    image: '/images/menstrual-cycle',
-    name: 'menstrual_cycle'
+    question: 'How many first-degree relatives have had breast cancer?',
+    type: 'text',
+    description: 'Number of first-degree relatives with breast cancer',
+    name: 'N_Rels'
   },
   {
     id: 8,
-    question: 'Have you entered menopause yet? ( no period for atleast 12 months)',
+    question: 'What is your race?',
     type: 'option',
-    options: ['Yes', 'No'],
-    description: 'Menopause is a risk factor.',
-    image: '/images/menopause.png',
-    name: 'menopause'
+    options: [
+      {
+        value: '1',
+        label: 'White'
+      },
+      {
+        value: '2',
+        label: 'African American'
+      },
+      {
+        value: '3',
+        label: 'Asian'
+      },
+      {
+        value: '4',
+        label: 'Hispanic'
+      },
+      {
+        value: '5',
+        label: 'Other'
+      }
+    ],
+    description: 'Race category (e.g., 1 for White, 2 for African American, etc.)',
+    name: 'Race'
   }
 ];
 
 const RiskPrediction = () => {
-  const { getRiskPredictionQuestions } = useRiskPrediction();
+  const { getRiskPredictionQuestions, riskPredictionAccessment } = useRiskPrediction();
+  const { user } = usePrivy();
+
+  console.log('authUser', user?.id);
   const chunkSize = 1;
   const { steps, initialValues } = useMultiStepQuestionnaire(questions, chunkSize, (q, index) => (
     <RiskCard
@@ -108,14 +137,17 @@ const RiskPrediction = () => {
   });
 
   const [startExamination, setStartExamination] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const [showResult] = useState(false);
   const [resultData, setResultData] = useState<ResultData | null>(null);
 
-  const handleSubmit = (values: unknown) => {
+  const handleSubmit = async (values: unknown) => {
     if (isLastStep) {
       console.log('Final Answers:', values);
 
       // Simulate backend response (replace this with actual API call)
+      if (!user?.id) return;
+      await riskPredictionAccessment(user.id, values);
+
       const simulatedResult = {
         riskLevel: 'Moderate',
         recommendation: 'Consider scheduling a mammogram and consult a specialist.',
@@ -124,7 +156,7 @@ const RiskPrediction = () => {
       };
 
       setResultData(simulatedResult);
-      setShowResult(true);
+      // setShowResult(true);
     } else {
       next();
     }

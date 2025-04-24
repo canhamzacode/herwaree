@@ -6,8 +6,11 @@ import { Input } from '../Input';
 
 interface QuestionCardProps {
   question: string;
-  type: 'option' | 'text' | 'date';
-  options?: string[];
+  type: 'option' | 'text' | 'date' | 'number'; // Added 'number'
+  options?: {
+    value: string;
+    label: string;
+  }[];
   name: string;
   description?: string;
   image?: string;
@@ -44,7 +47,7 @@ const RiskPredictionQuestionCard = ({
         <div className={`w-full px-3 gap-4 grid ${options.length == 2 ? 'grid-cols-2' : ''}`}>
           {type === 'option' &&
             options.map((option, index) => {
-              const isSelected = field.value === option;
+              const isSelected = field.value === option.value;
               return (
                 <div
                   key={index}
@@ -53,19 +56,19 @@ const RiskPredictionQuestionCard = ({
                       ? 'border-primary bg-primary/10 text-primary'
                       : 'border-[#818181] text-[#818181]'
                   }`}
-                  onClick={() => setFieldValue(name, option)}
+                  onClick={() => setFieldValue(name, option.value)}
                 >
                   <div
                     className={`w-4 h-4 rounded-full border ${
                       isSelected ? 'bg-primary border-primary' : 'border-[#818181] text-[#818181]'
                     }`}
                   />
-                  <span className="flex-1">{option}</span>
+                  <span className="flex-1">{option.label}</span>
                 </div>
               );
             })}
 
-          {(type === 'text' || type === 'date') && (
+          {(type === 'text' || type === 'date' || type === 'number') && (
             <Input name={name} type={type} placeholder="Type your answer..." />
           )}
         </div>

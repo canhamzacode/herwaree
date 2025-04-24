@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import axiosInstance from '@/utils/axiosInstance';
 import { createContext, useContext, useState } from 'react';
@@ -7,6 +8,7 @@ interface IRiskPredictionContext {
   loading: boolean;
   getRiskPredictionQuestions: () => void;
   riskPredictionQuestions: IRiskPredictions[];
+  riskPredictionAccessment: (privyId: string, data: any) => void;
 }
 
 export const RiskPredictionContext = createContext<IRiskPredictionContext | undefined>(undefined);
@@ -27,12 +29,26 @@ const RiskPredictionProvider = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
-  //   {
-  //     data: [],
-  //     userId: ""
-  //   }
+  const riskPredictionAccessment = async (privyId: string, data: any) => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post(`/bcra/${privyId}`, {
+        ...data
+      });
+      console.log(res);
+    } catch (error) {
+      console.error('Error fetching self examination questions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const value = { loading, getRiskPredictionQuestions, riskPredictionQuestions };
+  const value = {
+    loading,
+    getRiskPredictionQuestions,
+    riskPredictionQuestions,
+    riskPredictionAccessment
+  };
 
   return <RiskPredictionContext.Provider value={value}>{children}</RiskPredictionContext.Provider>;
 };
