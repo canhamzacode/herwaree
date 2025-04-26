@@ -8,7 +8,7 @@ interface IRiskPredictionContext {
   loading: boolean;
   getRiskPredictionQuestions: () => void;
   riskPredictionQuestions: IRiskPredictions[];
-  riskPredictionAccessment: (privyId: string, data: any) => void;
+  riskPredictionAccessment: (privyId: string, data: any) => Promise<string>;
 }
 
 export const RiskPredictionContext = createContext<IRiskPredictionContext | undefined>(undefined);
@@ -35,7 +35,8 @@ const RiskPredictionProvider = ({ children }: { children: React.ReactNode }) => 
       const res = await axiosInstance.post(`/bcra/${privyId}`, {
         ...data
       });
-      console.log(res);
+      console.log(res.data);
+      return res.data.suggest;
     } catch (error) {
       console.error('Error fetching self examination questions:', error);
     } finally {

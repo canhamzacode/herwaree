@@ -1,16 +1,15 @@
 import React from 'react';
 import { Button } from '../Button';
-import { ResultData } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Header } from '../Header';
+import ReactMarkdown from 'react-markdown';
 
 interface IAcessmentResultProps {
-  resultData: ResultData;
+  suggestion: string;
 }
 
-const AcessmentResult = ({ resultData }: IAcessmentResultProps) => {
-  const result = [resultData.riskLevel, resultData.recommendation, resultData.details];
+const AcessmentResult = ({ suggestion }: IAcessmentResultProps) => {
   return (
     <div>
       <Header
@@ -34,17 +33,8 @@ const AcessmentResult = ({ resultData }: IAcessmentResultProps) => {
         <p className="text-sm text-gray-600">
           This is based on the answers you gave in the screening quiz that indicated :
         </p>
-        <div className="flex flex-col gap-3">
-          {result.map((item, index) => (
-            <div key={index} className="w-full flex gap-4 items-center text-left">
-              <div>
-                <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
-              </div>
-              <p key={index} className="text-sm text-gray-600">
-                {item}
-              </p>
-            </div>
-          ))}
+        <div className="flex flex-col gap-3 text-left text-sm">
+          <ReactMarkdown>{suggestion}</ReactMarkdown>
         </div>
         <Link href="/" className="w-full">
           <Button className="mt-6 text-sm">Go back to homepage</Button>

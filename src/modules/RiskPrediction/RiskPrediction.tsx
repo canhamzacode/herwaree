@@ -2,7 +2,6 @@
 import { AcessmentResult, Button, Header, RiskCard } from '@/components';
 import useMultiStepForm from '@/hooks/useMultiStepForm';
 import { useMultiStepQuestionnaire } from '@/hooks/useMultiStepQuestionnaire';
-import { ResultData } from '@/types';
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useRiskPrediction } from './context';
@@ -127,7 +126,6 @@ const RiskPrediction = () => {
       options={q.options}
       name={q.name}
       type={q.type}
-      // description={q.description}
       image={q.image}
     />
   ));
@@ -137,8 +135,8 @@ const RiskPrediction = () => {
   });
 
   const [startExamination, setStartExamination] = useState(false);
-  const [showResult] = useState(false);
-  const [resultData, setResultData] = useState<ResultData | null>(null);
+  const [showResult, setShowResult] = useState(false);
+  const [suggestion, setSuggestion] = useState<string | null>(null);
 
   const handleSubmit = async (values: unknown) => {
     if (isLastStep) {
@@ -146,17 +144,10 @@ const RiskPrediction = () => {
 
       // Simulate backend response (replace this with actual API call)
       if (!user?.id) return;
-      await riskPredictionAccessment(user.id, values);
+      const res = await riskPredictionAccessment(user.id, values);
+      setSuggestion(res);
 
-      const simulatedResult = {
-        riskLevel: 'Moderate',
-        recommendation: 'Consider scheduling a mammogram and consult a specialist.',
-        details:
-          'Based on your family history and lifestyle factors, you may have a moderate risk of breast cancer.'
-      };
-
-      setResultData(simulatedResult);
-      // setShowResult(true);
+      setShowResult(true);
     } else {
       next();
     }
@@ -200,7 +191,7 @@ const RiskPrediction = () => {
         </>
       ) : showResult ? (
         // RESULT SCREEN
-        <>{resultData && <AcessmentResult resultData={resultData} />}</>
+        <>{suggestion && <AcessmentResult suggestion={suggestion} />}</>
       ) : (
         // FORM SCREEN
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
