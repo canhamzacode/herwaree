@@ -8,7 +8,13 @@ interface IRiskPredictionContext {
   loading: boolean;
   getRiskPredictionQuestions: () => void;
   riskPredictionQuestions: IRiskPredictions[];
-  riskPredictionAccessment: (privyId: string, data: any) => Promise<string>;
+  riskPredictionAccessment: (
+    privyId: string,
+    data: any
+  ) => Promise<{
+    success: boolean;
+    message: string;
+  }>;
 }
 
 export const RiskPredictionContext = createContext<IRiskPredictionContext | undefined>(undefined);
@@ -29,16 +35,23 @@ const RiskPredictionProvider = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
-  const riskPredictionAccessment = async (privyId: string, data: any) => {
+  const riskPredictionAccessment = async (
+    privyId: string,
+    data: any
+  ): Promise<{ success: boolean; message: string }> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/bcra/${privyId}`, {
-        ...data
-      });
-      console.log(res.data);
-      return res.data.suggest;
-    } catch (error) {
-      console.error('Error fetching self examination questions:', error);
+      const res = await axiosInstance.post(`/bcra/${privyId}`, data);
+      return { success: true, message: res.data.suggest };
+    } catch (error: any) {
+      console.error('Error during risk prediction:', error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.cleanedMessage ||
+        'An unexpected error occurred. Please try again later.';
+
+      return { success: false, message: errorMessage };
     } finally {
       setLoading(false);
     }

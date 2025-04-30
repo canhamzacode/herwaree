@@ -16,13 +16,18 @@ const useMultiStepForm = ({ steps }: UseMultiStepFormProps) => {
     setCurrentStepIndex((i) => (i > 0 ? i - 1 : i));
   };
 
+  const reset = () => {
+    setCurrentStepIndex(0);
+  };
+
   return {
     step: steps[currentStepIndex],
     stepIndex: currentStepIndex,
     isLastStep: currentStepIndex === steps.length - 1,
     isFirstStep: currentStepIndex === 0,
     next,
-    prev
+    prev,
+    reset
   };
 };
 
