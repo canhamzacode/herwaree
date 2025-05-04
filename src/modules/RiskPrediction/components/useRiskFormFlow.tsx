@@ -103,7 +103,7 @@ const questions: Question[] = [
         label: 'Hispanic'
       },
       {
-        value: '5',
+        value: '99',
         label: 'Other'
       }
     ],
@@ -137,7 +137,45 @@ export const useRiskFormFlow = () => {
   const handleSubmit = async (values: RiskPredictionValues) => {
     setErrorMessage(null);
 
+    // Convert necessary values to numbers for validation
+    const currentAge = Number(values.T1);
+    const targetAge = Number(values.T2);
+    const numBiopsies = Number(values.N_Biop);
+    const ageAtMenstruation = Number(values.AgeMen);
+    const ageAtFirstBirth = Number(values.Age1st);
+    const numRelatives = Number(values.N_Rels);
+
     if (isLastStep) {
+      // Validation logic
+      if (currentAge <= 0 || targetAge <= 0) {
+        setErrorMessage('Age values must be positive numbers.');
+        return;
+      }
+
+      if (targetAge < currentAge) {
+        setErrorMessage('Target age cannot be less than current age.');
+        return;
+      }
+
+      if (numBiopsies < 0) {
+        setErrorMessage('Number of biopsies cannot be negative.');
+        return;
+      }
+
+      if (ageAtMenstruation <= 0 || ageAtMenstruation > currentAge) {
+        setErrorMessage('Invalid age at menstruation.');
+        return;
+      }
+
+      if (ageAtFirstBirth <= 0 || ageAtFirstBirth > currentAge) {
+        setErrorMessage('Invalid age at first live birth.');
+        return;
+      }
+
+      if (numRelatives < 0) {
+        setErrorMessage('Number of relatives cannot be negative.');
+        return;
+      }
       if (!user?.id) return;
 
       const result = await riskPredictionAccessment(user.id, values);
@@ -147,7 +185,6 @@ export const useRiskFormFlow = () => {
         return;
       }
 
-      console.log('Risk Prediction Result:', result.message);
       setSuggestion(result.message);
       setShowResult(true);
     } else {

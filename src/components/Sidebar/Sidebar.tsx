@@ -1,3 +1,5 @@
+'use client';
+import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import React from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
@@ -23,6 +25,7 @@ const links = [
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+  const { logout } = usePrivy();
   return (
     <>
       <div
@@ -33,7 +36,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       ></div>
 
       <div
-        className={`absolute top-0 right-0 h-full w-[250px] bg-primary text-white z-50 p-5 flex flex-col gap-8 transform transition-transform duration-300 ${
+        className={`absolute top-0 right-0 h-full w-[250px] bg-white  z-50 p-5 flex flex-col gap-8 transform transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -52,7 +55,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
               <p>{link.title}</p>
             </Link>
           ))}
+          <button
+            onClick={() => {
+              logout();
+            }}
+            className="bg-red-500 text-white py-2 px-4 rounded-md"
+          >
+            Logout
+          </button>
         </div>
+
+        {/* Logout Button */}
       </div>
     </>
   );
