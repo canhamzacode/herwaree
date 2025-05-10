@@ -8,7 +8,7 @@ const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin']
 const getinter = Inter({ variable: '--font-geist-inter', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Herwaree - Break Language Barriers, Anytime, Anywhere.',
+  title: 'Herwaree - Your journey to better breast health starts here.',
   description:
     'Your journey to better breast health starts here. Let’s empower you with knowledge and tools to stay proactive and confident.'
 };
@@ -29,7 +29,7 @@ export default function RootLayout({
         {/* Open Graph / Facebook */}
         <meta
           property="og:title"
-          content="Herwaree - Break Language Barriers, Anytime, Anywhere."
+          content="Herwaree - Your journey to better breast health starts here."
         />
         <meta
           property="og:description"
