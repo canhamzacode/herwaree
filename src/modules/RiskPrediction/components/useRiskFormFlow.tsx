@@ -6,7 +6,7 @@ import { useRiskPrediction } from '../context';
 import { RiskCard } from '@/components';
 import { RiskPredictionValues } from '../model';
 
-type QuestionType = 'option' | 'text' | 'date' | 'number';
+type QuestionType = 'option' | 'text' | 'date' | 'number' | 'option_number';
 
 interface Question {
   id: number;
@@ -63,21 +63,26 @@ const questions: Question[] = [
   {
     id: 5,
     question: 'At what age did you have your first menstruation?',
-    type: 'text',
+    type: 'number',
     description: 'Age at first menstruation',
     name: 'AgeMen'
   },
   {
     id: 6,
     question: 'At what age did you have your first live birth?',
-    type: 'text',
-    description: 'Age at first live birth',
+    type: 'option_number',
+    options: [
+      { value: '98', label: 'Not yet' },
+      { value: '99', label: "I don't know" }
+    ],
+    description:
+      'Choose "Not yet" if you have not given birth or "I don’t know" if unsure or provide the age.',
     name: 'Age1st'
   },
   {
     id: 7,
     question: 'How many first-degree relatives have had breast cancer?',
-    type: 'text',
+    type: 'number',
     description: 'Number of first-degree relatives with breast cancer',
     name: 'N_Rels'
   },
@@ -137,7 +142,6 @@ export const useRiskFormFlow = () => {
   const handleSubmit = async (values: RiskPredictionValues) => {
     setErrorMessage(null);
 
-    // Convert necessary values to numbers for validation
     const currentAge = Number(values.T1);
     const targetAge = Number(values.T2);
     const numBiopsies = Number(values.N_Biop);
@@ -167,15 +171,19 @@ export const useRiskFormFlow = () => {
         return;
       }
 
-      if (ageAtFirstBirth <= 0 || ageAtFirstBirth > currentAge) {
-        setErrorMessage('Invalid age at first live birth.');
-        return;
+      // Handle new options for live birth question
+      if (ageAtFirstBirth < 0 || ageAtFirstBirth > currentAge) {
+        if (ageAtFirstBirth !== 98 && ageAtFirstBirth !== 99) {
+          setErrorMessage('Invalid age at first live birth.');
+          return;
+        }
       }
 
       if (numRelatives < 0) {
         setErrorMessage('Number of relatives cannot be negative.');
         return;
       }
+
       if (!user?.id) return;
 
       const result = await riskPredictionAccessment(user.id, values);

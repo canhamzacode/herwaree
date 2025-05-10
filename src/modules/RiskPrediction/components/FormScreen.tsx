@@ -36,15 +36,17 @@ const FormScreen = ({
         <div className="flex flex-col gap-6">{steps[stepIndex].component}</div>
 
         <div className="flex justify-between gap-4 mt-4">
-          <Button
-            type="button"
-            className="text-xs"
-            variant="outline"
-            onClick={prev}
-            disabled={stepIndex === 0}
-          >
-            Back
-          </Button>
+          {stepIndex !== 0 && (
+            <Button
+              type="button"
+              className="text-xs"
+              variant="outline"
+              onClick={prev}
+              disabled={stepIndex === 0}
+            >
+              Back
+            </Button>
+          )}
           <Button type="submit" className="text-xs">
             {loading ? 'Loading...' : isLastStep ? 'Finish' : 'Next'}
           </Button>
