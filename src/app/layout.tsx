@@ -20,6 +20,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Herwaree Team" />
+
+        {/* Open Graph / Facebook */}
+        <meta
+          property="og:title"
+          content="Herwaree - Break Language Barriers, Anytime, Anywhere."
+        />
+        <meta
+          property="og:description"
+          content="Your journey to better breast health starts here. Let’s empower you with knowledge and tools to stay proactive and confident."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://herwaree-three.vercel.app/" />
+        <meta property="og:image" content="/logo.png" />
+
+        {/* Favicon */}
+        <link rel="icon" href="/logo.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${getinter.variable} antialiased`}
       >
