@@ -91,36 +91,36 @@ const questions: Question[] = [
     type: 'number',
     description: 'Number of first-degree relatives with breast cancer',
     name: 'N_Rels'
-  },
-  {
-    id: 8,
-    question: 'What is your race?',
-    type: 'option',
-    options: [
-      {
-        value: '1',
-        label: 'White'
-      },
-      {
-        value: '2',
-        label: 'African American'
-      },
-      {
-        value: '3',
-        label: 'Asian'
-      },
-      {
-        value: '4',
-        label: 'Hispanic'
-      },
-      {
-        value: '99',
-        label: 'Other'
-      }
-    ],
-    description: 'Race category (e.g., 1 for White, 2 for African American, etc.)',
-    name: 'Race'
   }
+  // {
+  //   id: 8,
+  //   question: 'What is your race?',
+  //   type: 'option',
+  //   options: [
+  //     {
+  //       value: '1',
+  //       label: 'White'
+  //     },
+  //     {
+  //       value: '2',
+  //       label: 'African American'
+  //     },
+  //     {
+  //       value: '3',
+  //       label: 'Asian'
+  //     },
+  //     {
+  //       value: '4',
+  //       label: 'Hispanic'
+  //     },
+  //     {
+  //       value: '99',
+  //       label: 'Other'
+  //     }
+  //   ],
+  //   description: 'Race category (e.g., 1 for White, 2 for African American, etc.)',
+  //   name: 'Race'
+  // }
 ];
 
 export const useRiskFormFlow = () => {
@@ -192,7 +192,10 @@ export const useRiskFormFlow = () => {
 
       if (!user?.id) return;
 
-      const result = await riskPredictionAccessment(user.id, values);
+      const result = await riskPredictionAccessment(user.id, {
+        ...values,
+        Race: 2
+      });
 
       if (!result.success) {
         setErrorMessage(result.message);
