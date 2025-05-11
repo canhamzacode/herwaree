@@ -39,9 +39,15 @@ const questions: Question[] = [
   {
     id: 3,
     question: 'How many previous breast biopsies have you had?',
-    type: 'number',
+    type: 'option_number',
     description: 'Number of previous breast biopsies',
-    name: 'N_Biop'
+    name: 'N_Biop',
+    options: [
+      {
+        label: "I haven't done one yet",
+        value: '98'
+      }
+    ]
   },
   {
     id: 4,
