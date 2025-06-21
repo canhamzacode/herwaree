@@ -1,28 +1,30 @@
 'use client';
 
-import { useOnboarding } from '@/hooks/useOnboarding';
-import { OnboardingStep } from '@/components/OnboardingStep';
-import { OnboardingButton } from '@/components/OnboardingButton';
+import React, { useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { LoginForm, RegisterForm, OtpForm } from './components';
 
-export default function Onboarding() {
-  const { step, nextStep, onboardingSteps } = useOnboarding();
-  const { image, title, description, action, bgImage, textStyle } = onboardingSteps[step];
+export default function Auth() {
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get('mode');
 
-  return (
-    <OnboardingStep
-      image={image}
-      title={title}
-      description={description}
-      action={
-        action || (
-          <OnboardingButton onClick={nextStep}>
-            {step < onboardingSteps.length - 1 ? 'Proceed' : 'Get Started'}
-          </OnboardingButton>
-        )
-      }
-      bgImage={bgImage}
-      textStyle={textStyle}
-      step={step}
-    />
+  const [mode, setMode] = useState<'login' | 'register' | 'otp'>(
+    initialMode === 'register' ? 'register' : 'login'
   );
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  const handleRegistrationSuccess = useCallback((email: string) => {
+    setUserEmail(email);
+    setMode('otp');
+  }, []);
+
+  if (mode === 'otp') {
+    return <OtpForm email={userEmail} />;
+  }
+
+  if (mode === 'register') {
+    return <RegisterForm onRegistrationSuccess={handleRegistrationSuccess} />;
+  }
+
+  return <LoginForm />;
 }

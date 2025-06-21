@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMultiStepQuestionnaire } from '@/hooks/useMultiStepQuestionnaire';
 import useMultiStepForm from '@/hooks/useMultiStepForm';
-import { usePrivy } from '@privy-io/react-auth';
+import { useAuthState } from '@/modules/Auth/context';
 import { useRiskPrediction } from '../context';
 import { RiskCard } from '@/components';
 import { RiskPredictionValues } from '../model';
@@ -9,118 +9,79 @@ import { RiskPredictionValues } from '../model';
 type QuestionType = 'option' | 'text' | 'date' | 'number' | 'option_number';
 
 interface Question {
-  id: number;
-  question: string;
+  id: string;
   type: QuestionType;
+  question: string;
   options?: {
     value: string;
     label: string;
   }[];
+  name: string;
   description?: string;
   image?: string;
-  name: string;
 }
 
 const questions: Question[] = [
   {
-    id: 1,
-    question: 'What is your current age?',
+    id: 'age',
     type: 'number',
-    description: 'Current age of the patient (e.g., 50)',
-    name: 'T1'
+    question: 'What is your age?',
+    name: 'age',
+    description: 'Current age of the patient'
   },
   {
-    id: 2,
-    question: 'What age do you want to assess your breast cancer risk at?',
+    id: 'age_at_menarche',
     type: 'number',
-    description: 'Target age to assess breast cancer risk (e.g., 60)',
-    name: 'T2'
+    question: 'At what age did you have your first menstrual period?',
+    name: 'age_at_menarche',
+    description: 'Age at first menstruation'
   },
   {
-    id: 3,
-    question: 'How many previous breast biopsies have you had?',
-    type: 'option_number',
-    description: 'Number of previous breast biopsies',
-    name: 'N_Biop',
+    id: 'age_at_first_live_birth',
+    type: 'number',
+    question:
+      'At what age did you have your first live birth? (If you have never given birth, enter 0)',
+    name: 'age_at_first_live_birth',
+    description: 'Age at first live birth'
+  },
+  {
+    id: 'number_of_first_degree_relatives',
+    type: 'number',
+    question:
+      'How many of your first-degree relatives (mother, sisters, daughters) have had breast cancer?',
+    name: 'number_of_first_degree_relatives',
+    description: 'Number of first-degree relatives with breast cancer'
+  },
+  {
+    id: 'number_of_breast_biopsies',
+    type: 'number',
+    question: 'How many breast biopsies have you had?',
+    name: 'number_of_breast_biopsies',
+    description: 'Number of breast biopsies'
+  },
+  {
+    id: 'atypical_hyperplasia',
+    type: 'option',
+    question: 'Have you ever been diagnosed with atypical hyperplasia?',
+    name: 'atypical_hyperplasia',
     options: [
-      {
-        label: "I haven't done one yet",
-        value: '98'
-      }
+      { value: 'Yes', label: 'Yes' },
+      { value: 'No', label: 'No' }
     ]
   },
   {
-    id: 4,
-    question: 'Was hyperplasia found in any biopsy?',
+    id: 'race',
     type: 'option',
+    question: 'What is your race/ethnicity?',
+    name: 'race',
     options: [
-      {
-        value: '1',
-        label: 'Yes'
-      },
-      {
-        value: '0',
-        label: 'No'
-      }
-    ],
-    description: 'Indicates if hyperplasia was found (1 for Yes, 0 for No)',
-    name: 'HypPlas'
-  },
-  {
-    id: 5,
-    question: 'At what age did you have your first menstruation?',
-    type: 'number',
-    description: 'Age at first menstruation',
-    name: 'AgeMen'
-  },
-  {
-    id: 6,
-    question: 'At what age did you have your first live birth?',
-    type: 'option_number',
-    options: [
-      { value: '98', label: 'Not yet' },
-      { value: '99', label: "I don't know" }
-    ],
-    description:
-      'Choose "Not yet" if you have not given birth or "I don’t know" if unsure or provide the age.',
-    name: 'Age1st'
-  },
-  {
-    id: 7,
-    question: 'How many first-degree relatives have had breast cancer?',
-    type: 'number',
-    description: 'Number of first-degree relatives with breast cancer',
-    name: 'N_Rels'
+      { value: 'White', label: 'White' },
+      { value: 'Black', label: 'Black' },
+      { value: 'Hispanic', label: 'Hispanic' },
+      { value: 'Asian', label: 'Asian' },
+      { value: 'Other', label: 'Other' }
+    ]
   }
-  // {
-  //   id: 8,
-  //   question: 'What is your race?',
-  //   type: 'option',
-  //   options: [
-  //     {
-  //       value: '1',
-  //       label: 'White'
-  //     },
-  //     {
-  //       value: '2',
-  //       label: 'African American'
-  //     },
-  //     {
-  //       value: '3',
-  //       label: 'Asian'
-  //     },
-  //     {
-  //       value: '4',
-  //       label: 'Hispanic'
-  //     },
-  //     {
-  //       value: '99',
-  //       label: 'Other'
-  //     }
-  //   ],
-  //   description: 'Race category (e.g., 1 for White, 2 for African American, etc.)',
-  //   name: 'Race'
-  // }
 ];
 
 export const useRiskFormFlow = () => {
@@ -134,7 +95,7 @@ export const useRiskFormFlow = () => {
   });
 
   const { getRiskPredictionQuestions, riskPredictionAccessment, loading } = useRiskPrediction();
-  const { user } = usePrivy();
+  const { user } = useAuthState();
 
   const [startExamination, setStartExamination] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -146,91 +107,40 @@ export const useRiskFormFlow = () => {
   }, []);
 
   const handleSubmit = async (values: RiskPredictionValues) => {
-    setErrorMessage(null);
+    if (!user?.id) {
+      setErrorMessage('User not authenticated');
+      return;
+    }
 
-    const currentAge = Number(values.T1);
-    const targetAge = Number(values.T2);
-    const numBiopsies = Number(values.N_Biop);
-    const ageAtMenstruation = Number(values.AgeMen);
-    const ageAtFirstBirth = Number(values.Age1st);
-    const numRelatives = Number(values.N_Rels);
-
-    if (isLastStep) {
-      // Validation logic
-      if (currentAge <= 0 || targetAge <= 0) {
-        setErrorMessage('Age values must be positive numbers.');
-        return;
-      }
-
-      if (targetAge < currentAge) {
-        setErrorMessage('Target age cannot be less than current age.');
-        return;
-      }
-
-      if (numBiopsies < 0) {
-        setErrorMessage('Number of biopsies cannot be negative.');
-        return;
-      }
-
-      if (ageAtMenstruation <= 0 || ageAtMenstruation > currentAge) {
-        setErrorMessage('Invalid age at menstruation.');
-        return;
-      }
-
-      // Handle new options for live birth question
-      if (ageAtFirstBirth < 0 || ageAtFirstBirth > currentAge) {
-        if (ageAtFirstBirth !== 98 && ageAtFirstBirth !== 99) {
-          setErrorMessage('Invalid age at first live birth.');
-          return;
-        }
-      }
-
-      if (numRelatives < 0) {
-        setErrorMessage('Number of relatives cannot be negative.');
-        return;
-      }
-
-      if (!user?.id) return;
-
-      const result = await riskPredictionAccessment(user.id, {
-        ...values,
-        Race: 2
-      });
-
-      if (!result.success) {
+    try {
+      const result = await riskPredictionAccessment(user.id, values);
+      if (result.success) {
+        setSuggestion(result.message);
+        setShowResult(true);
+      } else {
         setErrorMessage(result.message);
-        return;
       }
-
-      setSuggestion(result.message);
-      setShowResult(true);
-    } else {
-      next();
+    } catch {
+      setErrorMessage('An error occurred during risk assessment');
     }
   };
 
-  const resetForm = () => {
-    setErrorMessage('');
-    reset();
-    setSuggestion(null);
-    setShowResult(false);
-    setStartExamination(false);
-  };
-
   return {
-    stepIndex,
     steps,
+    stepIndex,
+    next,
+    prev,
+    isLastStep,
+    reset,
     initialValues,
-    handleSubmit,
+    loading,
     startExamination,
     setStartExamination,
     showResult,
+    setShowResult,
     suggestion,
-    prev,
-    next,
-    isLastStep,
-    loading,
     errorMessage,
-    resetForm
+    setErrorMessage,
+    handleSubmit
   };
 };

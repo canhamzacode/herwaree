@@ -1,10 +1,10 @@
 'use client';
-import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import React from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { GiThunderball } from 'react-icons/gi';
 import { LuClock10 } from 'react-icons/lu';
+import { useAuthState } from '@/modules/Auth/context';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ const links = [
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
-  const { logout } = usePrivy();
+  const { logout } = useAuthState();
   return (
     <>
       <div

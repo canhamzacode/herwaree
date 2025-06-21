@@ -9,7 +9,7 @@ interface IRiskPredictionContext {
   getRiskPredictionQuestions: () => void;
   riskPredictionQuestions: IRiskPredictions[];
   riskPredictionAccessment: (
-    privyId: string,
+    userId: string,
     data: any
   ) => Promise<{
     success: boolean;
@@ -17,7 +17,7 @@ interface IRiskPredictionContext {
   }>;
 }
 
-export const RiskPredictionContext = createContext<IRiskPredictionContext | undefined>(undefined);
+const RiskPredictionContext = createContext<IRiskPredictionContext | undefined>(undefined);
 
 const RiskPredictionProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -36,12 +36,12 @@ const RiskPredictionProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const riskPredictionAccessment = async (
-    privyId: string,
+    userId: string,
     data: any
   ): Promise<{ success: boolean; message: string }> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/bcra/${privyId}`, data);
+      const res = await axiosInstance.post(`/bcra/${userId}`, data);
       return { success: true, message: res.data.suggest };
     } catch (error: any) {
       console.error('Error during risk prediction:', error);

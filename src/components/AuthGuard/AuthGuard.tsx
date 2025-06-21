@@ -7,24 +7,24 @@ import { SplashScreen } from '@/components';
 import { useAuthState } from '@/modules/Auth/context';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isAuthLoaded, isOnboarded } = useAuthState();
+  const { isAuthenticated, isAuthLoaded /*, isOnboarded*/ } = useAuthState();
   const router = useRouter();
   const pathname = usePathname();
   const [isRouting, setIsRouting] = useState(true);
 
-  const publicPages = ['/auth', '/onboarding'];
+  const publicPages = ['/auth' /*, '/onboarding'*/];
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
     if (!isAuthLoaded) return;
 
-    console.log('Checking......');
-
+    // Onboarding logic commented out for now
     if (isAuthenticated) {
-      if (!isOnboarded && pathname !== '/onboarding') {
-        setIsRouting(true);
-        router.replace('/onboarding');
-      } else if (isOnboarded && isPublicPage) {
+      // if (!isOnboarded && pathname !== '/onboarding') {
+      //   setIsRouting(true);
+      //   router.replace('/onboarding');
+      // } else
+      if (isPublicPage) {
         setIsRouting(true);
         router.replace('/');
       } else {
@@ -36,7 +36,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     } else {
       setIsRouting(false);
     }
-  }, [isAuthenticated, isOnboarded, isAuthLoaded, router, pathname]);
+  }, [isAuthenticated, /*isOnboarded,*/ isAuthLoaded, router, pathname, isPublicPage]);
 
   // Prevent rendering any page until the right route is set
   if (!isAuthLoaded || isRouting) {

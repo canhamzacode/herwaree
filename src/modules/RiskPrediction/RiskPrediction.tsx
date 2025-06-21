@@ -9,6 +9,7 @@ const RiskPrediction = () => {
     startExamination,
     setStartExamination,
     showResult,
+    setShowResult,
     suggestion,
     stepIndex,
     steps,
@@ -18,8 +19,16 @@ const RiskPrediction = () => {
     isLastStep,
     loading,
     errorMessage,
-    resetForm
+    setErrorMessage,
+    reset
   } = useRiskFormFlow();
+
+  const resetForm = () => {
+    reset();
+    setShowResult(false);
+    setErrorMessage(null);
+    setStartExamination(false);
+  };
 
   return (
     <div className="flex flex-col w-full gap-5 px-5 overflow-x-hidden py-6">

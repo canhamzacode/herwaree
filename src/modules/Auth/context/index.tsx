@@ -1,68 +1,118 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/utils/axiosInstance';
+import toast from 'react-hot-toast';
 
 interface IUser {
   email: string;
   username: string;
 }
+
 interface AuthContextType {
-  user: { privy_id: string; email: string; wallet_addr: string } | null;
+  user: { id: string; email: string } | null;
   isAuthenticated: boolean;
   isAuthLoaded: boolean;
   isOnboarded: boolean;
-  login: () => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (firstname: string, lastname: string, email: string, password: string) => Promise<void>;
   onboardUser: (username: string, image_id: string) => void;
   getUserInfo: () => void;
   authUser: IUser | null;
+  verifyOtp: (token: string, email: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { authenticated, ready, login, logout, user } = usePrivy();
   const router = useRouter();
   const [userData, setUserData] = useState<AuthContextType['user'] | null>(null);
   const [isOnboarded, setIsOnboarded] = useState<boolean>(false);
   const [isAuthLoaded, setIsAuthLoaded] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [authUser, setAuthUser] = useState<IUser | null>(null);
 
-  const handleAuthentication = async (privyUser: typeof user) => {
-    if (!privyUser) return;
-
-    if (!privyUser || !privyUser.id || !privyUser.wallet?.address) {
-      console.error('User data is incomplete, skipping authentication request.');
-      return;
-    }
-
-    const formData = {
-      privy_id: privyUser.id,
-      email: privyUser.email?.address || '',
-      wallet_addr: privyUser.wallet.address
-    };
-
-    setUserData(formData);
-
+  const login = async (email: string, password: string) => {
     try {
-      const res = await axiosInstance.post('/auth/auth-me', formData);
-      setIsOnboarded(res.data.isOnboarded);
-      // router.replace(res.data.isOnboarded ? '/' : '/onboarding');
-    } catch (error) {
-      console.error('Error sending user data:', error);
-    } finally {
+      const res = await axiosInstance.post('/auth/login', {
+        email,
+        password
+      });
+      console.log('Login response:', res);
+
+      if (res.data?.data?.accessToken && res.data?.data?.user) {
+        // Save token to localStorage
+        localStorage.setItem('accessToken', res.data.data.accessToken);
+
+        // Set user data
+        setUserData({ id: res.data.data.user.id, email: res.data.data.user.email });
+        setIsAuthenticated(true);
+        setIsAuthLoaded(true);
+
+        // Optionally, navigate to home or dashboard
+        router.replace('/');
+      } else {
+        setIsAuthenticated(false);
+        setIsAuthLoaded(true);
+      }
+    } catch (error: any) {
+      const backendMsg =
+        error?.response?.data?.cleanedMessage || error?.response?.data?.message || 'Login error';
+      toast.error(backendMsg);
+      setIsAuthenticated(false);
       setIsAuthLoaded(true);
+      console.error('Login error:', error);
+      throw error;
     }
   };
 
+  const register = async (firstname: string, lastname: string, email: string, password: string) => {
+    try {
+      await axiosInstance.post('/auth/signup', {
+        firstname,
+        lastname,
+        email,
+        password
+      });
+    } catch (error: any) {
+      const backendMsg =
+        error?.response?.data?.cleanedMessage ||
+        error?.response?.data?.message ||
+        'Registration error';
+      toast.error(backendMsg);
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
+
+  const verifyOtp = async (token: string, email: string) => {
+    try {
+      await axiosInstance.post('/auth/user/verify-otp', {
+        email,
+        token
+      });
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUserData(null);
+    setAuthUser(null);
+    setIsOnboarded(false);
+    router.push('/auth');
+  };
+
   const onboardUser = async (username: string, image_id: string) => {
-    if (!userData?.privy_id) return;
+    if (!userData?.id) return;
 
     try {
-      await axiosInstance.post(`/auth/onboard/${userData.privy_id}`, { username, image_id });
+      await axiosInstance.post(`/auth/onboard/${userData.id}`, { username, image_id });
       setIsOnboarded(true);
       router.replace('/');
     } catch (error) {
@@ -70,9 +120,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Update axiosInstance to use token for Authorization header
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    if (token) {
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+  }, [isAuthenticated]);
+
   const getUserInfo = async () => {
     try {
-      const res = await axiosInstance.get(`/auth/user/${user?.id}`);
+      // Get token from localStorage
+      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      if (!token) return;
+
+      // Set Authorization header
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      const res = await axiosInstance.get('/auth/profile-me');
       console.log('res', res);
       setAuthUser(res.data.user);
     } catch (error) {
@@ -81,27 +146,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    if (ready) {
-      if (authenticated && user) {
-        handleAuthentication(user);
-      } else {
-        setIsAuthLoaded(true);
-      }
-    }
-  }, [authenticated, ready, user]);
+    // TODO: Check for existing session/token
+    setIsAuthLoaded(true);
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
         user: userData,
-        isAuthenticated: authenticated,
+        isAuthenticated,
         isAuthLoaded,
         isOnboarded,
         login,
         logout,
+        register,
         onboardUser,
         getUserInfo,
-        authUser
+        authUser,
+        verifyOtp
       }}
     >
       {children}
